@@ -26,58 +26,77 @@ const PayslipPreview = ({ data }: PayslipPreviewProps) => {
   };
 
   return (
-    <Card className="w-full aspect-[1/1.414] bg-white shadow-xl overflow-hidden" id="payslip-preview">
-      <div className="h-full overflow-auto p-8 text-xs" style={{ fontFamily: "Arial, sans-serif" }}>
-        {/* Header */}
-        <div className="flex justify-between items-start mb-6">
-          <div className="text-3xl font-bold text-charcoal">{data.companyName}</div>
-          <div className="bg-primary text-primary-foreground px-6 py-2 rounded-md font-semibold">
-            PAYSLIP FOR {data.month}-{data.year}
+    <Card className="w-full bg-white shadow-2xl overflow-hidden border-0" id="payslip-preview" style={{ width: "794px", minHeight: "1123px" }}>
+      <div className="p-10" style={{ fontFamily: "Arial, sans-serif", fontSize: "11px" }}>
+        {/* Company Logo/Name */}
+        <div className="mb-3">
+          <div className="text-5xl font-bold" style={{ fontFamily: "Arial, sans-serif", letterSpacing: "-1px" }}>
+            {data.companyName.toLowerCase()}
           </div>
         </div>
 
-        <div className="h-1.5 bg-primary mb-6" />
+        {/* Header Bar */}
+        <div className="flex justify-between items-center mb-4 px-3 py-2.5" style={{ backgroundColor: "#0B8A8F" }}>
+          <div className="text-white font-bold text-xs">{data.companyName.toUpperCase()}</div>
+          <div className="text-white font-bold text-xs">
+            PAYSLIP FOR {data.month.toUpperCase()}-{data.year}
+          </div>
+        </div>
 
         {/* Employee Info Grid */}
-        <div className="grid grid-cols-4 gap-px bg-border mb-6 border border-border">
-          {[
-            { label: "Employee No.", value: data.employeeNo },
-            { label: "Name", value: data.employeeName },
-            { label: "Bank", value: data.bankName },
-            { label: "Bank A/c No.", value: data.bankAccount },
-            { label: "DOB", value: data.dob },
-            { label: "LOP days", value: data.lopDays },
-            { label: "PF A/C NO.", value: data.pfAccount },
-            { label: "STD days", value: data.stdDays },
-            { label: "PF UAN", value: data.pfUan },
-            { label: "No. of Days Paid", value: data.daysPaid },
-            { label: "Department", value: data.department, colSpan: 2 },
-            { label: "Designation", value: data.designation, colSpan: 2 },
-            { label: "Location", value: data.location },
-            { label: "Previous Month LOP", value: data.prevLop },
-            { label: "ESI No.", value: data.esiNo, colSpan: 2 },
-          ].map((field, idx) => (
-            <div
-              key={idx}
-              className={`bg-white p-2 ${field.colSpan === 2 ? "col-span-2" : ""}`}
-            >
-              <div className="text-primary font-semibold text-xs mb-1">{field.label}</div>
-              <div className="font-bold text-charcoal">{field.value}</div>
-            </div>
-          ))}
+        <div className="mb-4" style={{ border: "1px solid #0B8A8F" }}>
+          <div className="grid grid-cols-4">
+            {[
+              { label: "Employee No.", value: data.employeeNo },
+              { label: "Name", value: data.employeeName, colSpan: 3 },
+              { label: "Bank", value: data.bankName },
+              { label: "Bank A/c No.", value: data.bankAccount, colSpan: 3 },
+              { label: "DOB", value: data.dob },
+              { label: "LOP days", value: data.lopDays, colSpan: 3 },
+              { label: "PF A/C NO.", value: data.pfAccount },
+              { label: "STD days", value: data.stdDays, colSpan: 3 },
+              { label: "PF UAN", value: data.pfUan },
+              { label: "No. of Days Paid", value: data.daysPaid, colSpan: 3 },
+              { label: "Department", value: data.department },
+              { label: "Designation", value: data.designation, colSpan: 3 },
+              { label: "Location", value: data.location },
+              { label: "Previous Month LOP", value: data.prevLop, colSpan: 3 },
+              { label: "ESI No.", value: data.esiNo, colSpan: 3 },
+            ].map((field, idx) => (
+              <div
+                key={idx}
+                className={`p-2.5 ${field.colSpan === 3 ? "col-span-3" : ""}`}
+                style={{
+                  borderRight: field.colSpan === 3 ? "none" : "1px solid #D9D9D9",
+                  borderBottom: idx < 15 ? "1px solid #D9D9D9" : "none",
+                  backgroundColor: idx % 2 === 0 ? "#F5F5F5" : "#FFFFFF"
+                }}
+              >
+                <div className="font-bold mb-0.5" style={{ color: "#0B8A8F", fontSize: "10px" }}>
+                  {field.label}
+                </div>
+                <div className="font-bold" style={{ color: "#000000", fontSize: "11px" }}>
+                  {field.value}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Earnings & Deductions Table */}
-        <div className="border border-border mb-4">
+        <div className="mb-2" style={{ border: "1px solid #0B8A8F" }}>
           {/* Table Header */}
-          <div className="grid grid-cols-12 bg-primary text-primary-foreground font-bold">
-            <div className="col-span-6 p-2 border-r border-white/20">EARNINGS</div>
-            <div className="col-span-3 p-2 border-r border-white/20 text-center">
-              No.of
-              <br />
-              Units / Earned
+          <div className="grid grid-cols-12 text-white font-bold" style={{ backgroundColor: "#0B8A8F" }}>
+            <div className="col-span-5 p-2 text-center" style={{ borderRight: "1px solid rgba(255,255,255,0.3)" }}>
+              EARNINGS
             </div>
-            <div className="col-span-3 p-2 text-center">Deduction / Amount</div>
+            <div className="col-span-2 p-2 text-center" style={{ borderRight: "1px solid rgba(255,255,255,0.3)", fontSize: "10px", lineHeight: "1.2" }}>
+              No.of<br />Units / Earned
+            </div>
+            <div className="col-span-3 p-2 text-center" style={{ borderRight: "1px solid rgba(255,255,255,0.3)" }}>
+              Deduction
+            </div>
+            <div className="col-span-2 p-2 text-center">Amount</div>
           </div>
 
           {/* Table Rows */}
@@ -92,58 +111,62 @@ const PayslipPreview = ({ data }: PayslipPreviewProps) => {
             { earning: "Monthly Joining Bonus", earnValue: data.earnings.joiningBonus, deduction: "", dedValue: "" },
             { earning: "Transportation Allowance", earnValue: data.earnings.transport, deduction: "", dedValue: "" },
           ].map((row, idx) => (
-            <div key={idx} className="grid grid-cols-12 border-t border-border text-charcoal">
-              <div className="col-span-6 p-2 border-r border-border">{row.earning}</div>
-              <div className="col-span-3 p-2 border-r border-border text-right font-bold font-mono">
+            <div key={idx} className="grid grid-cols-12" style={{ borderTop: "1px solid #D9D9D9" }}>
+              <div className="col-span-5 p-2" style={{ borderRight: "1px solid #D9D9D9" }}>
+                {row.earning}
+              </div>
+              <div className="col-span-2 p-2 text-right font-bold" style={{ borderRight: "1px solid #D9D9D9", fontVariantNumeric: "tabular-nums" }}>
                 {formatAmount(row.earnValue)}
               </div>
-              <div className="col-span-3 p-2">
-                {row.deduction && (
-                  <div className="flex justify-between">
-                    <span>{row.deduction}</span>
-                    <span className="font-bold font-mono">{formatAmount(row.dedValue)}</span>
-                  </div>
-                )}
+              <div className="col-span-3 p-2" style={{ borderRight: "1px solid #D9D9D9" }}>
+                {row.deduction}
+              </div>
+              <div className="col-span-2 p-2 text-right font-bold" style={{ fontVariantNumeric: "tabular-nums" }}>
+                {row.deduction ? formatAmount(row.dedValue) : ""}
               </div>
             </div>
           ))}
 
           {/* Totals Row */}
-          <div className="grid grid-cols-12 bg-primary text-primary-foreground font-bold border-t border-white/20">
-            <div className="col-span-6 p-2 border-r border-white/20">GROSS EARNING</div>
-            <div className="col-span-3 p-2 border-r border-white/20 text-right font-mono">
+          <div className="grid grid-cols-12 text-white font-bold" style={{ backgroundColor: "#0B8A8F", borderTop: "1px solid rgba(255,255,255,0.3)" }}>
+            <div className="col-span-5 p-2" style={{ borderRight: "1px solid rgba(255,255,255,0.3)" }}>
+              GROSS EARNING
+            </div>
+            <div className="col-span-2 p-2 text-right" style={{ borderRight: "1px solid rgba(255,255,255,0.3)", fontVariantNumeric: "tabular-nums" }}>
               {formatAmount(grossEarning)}
             </div>
-            <div className="col-span-3 p-2 text-right font-mono">{formatAmount(grossDeduction)}</div>
+            <div className="col-span-3 p-2" style={{ borderRight: "1px solid rgba(255,255,255,0.3)" }}>
+              GROSS DEDUCTION
+            </div>
+            <div className="col-span-2 p-2 text-right" style={{ fontVariantNumeric: "tabular-nums" }}>
+              {formatAmount(grossDeduction)}
+            </div>
           </div>
         </div>
 
         {/* Net Pay */}
-        <div className="text-center mb-4">
-          <div className="inline-block bg-primary/10 px-6 py-3 rounded-lg">
-            <div className="text-2xl font-bold text-primary font-mono">
-              Net Pay – {formatAmount(netPay)}
-            </div>
-          </div>
+        <div className="text-center mb-3 py-2 text-white font-bold" style={{ backgroundColor: "#0B8A8F", fontSize: "14px" }}>
+          Net Pay - {formatAmount(netPay)}
         </div>
 
         {/* Employer Contribution */}
-        <div className="border border-border mb-6">
-          <div className="bg-primary text-primary-foreground font-bold p-2">
+        <div className="mb-8" style={{ border: "1px solid #0B8A8F" }}>
+          <div className="text-white font-bold p-2 text-center" style={{ backgroundColor: "#0B8A8F" }}>
             Employer Contribution
           </div>
-          <div className="grid grid-cols-12 p-2 text-charcoal">
-            <div className="col-span-6">PF - Employer Contr.</div>
-            <div className="col-span-3"></div>
-            <div className="col-span-3 text-right font-bold font-mono">
+          <div className="grid grid-cols-12 p-2" style={{ borderTop: "1px solid #D9D9D9" }}>
+            <div className="col-span-5">PF - Employer Contr.</div>
+            <div className="col-span-2"></div>
+            <div className="col-span-3">Earned</div>
+            <div className="col-span-2 text-right font-bold" style={{ fontVariantNumeric: "tabular-nums" }}>
               {formatAmount(data.pfEmployer)}
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-muted-foreground italic text-xs">
-          * This is a computer generated payslip and does not require signature and stamp.
+        <div className="text-center italic" style={{ color: "#999999", fontSize: "9px", paddingTop: "20px" }}>
+          ** This is a computer generated payslip and does not require signature and stamp.
         </div>
       </div>
     </Card>
