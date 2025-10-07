@@ -28,11 +28,14 @@ const PayslipPreview = ({ data }: PayslipPreviewProps) => {
   return (
     <Card className="w-full bg-white shadow-2xl overflow-hidden border-0" id="payslip-preview" style={{ width: "794px", minHeight: "1123px" }}>
       <div className="p-10" style={{ fontFamily: "Arial, sans-serif", fontSize: "11px" }}>
-        {/* Company Logo/Name */}
+        {/* Company Logo */}
         <div className="mb-3">
-          <div className="text-5xl font-bold" style={{ fontFamily: "Arial, sans-serif", letterSpacing: "-1px" }}>
-            {data.companyName.toLowerCase()}
-          </div>
+          <img 
+            src="/dts-logo-white.jpg" 
+            alt="Company Logo" 
+            className="h-16 w-auto object-contain"
+            style={{ filter: "invert(1)" }}
+          />
         </div>
 
         {/* Header Bar */}

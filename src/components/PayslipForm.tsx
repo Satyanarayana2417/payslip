@@ -2,12 +2,49 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PayslipData } from "@/types/payslip";
-import { Building2, User, Wallet, Calendar } from "lucide-react";
+import { Building2, User, Wallet, Calendar, LucideIcon } from "lucide-react";
+import { ReactNode } from "react";
 
 interface PayslipFormProps {
   data: PayslipData;
   onChange: (data: PayslipData) => void;
 }
+
+interface FormSectionProps {
+  icon: LucideIcon;
+  title: string;
+  children: ReactNode;
+}
+
+interface FormFieldProps {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+}
+
+// Move components outside to prevent recreation on every render
+const FormSection = ({ icon: Icon, title, children }: FormSectionProps) => (
+  <Card className="p-6 backdrop-blur-sm bg-card/50 border-primary/10 hover:border-primary/20 transition-all duration-300">
+    <div className="flex items-center gap-2 mb-4">
+      <Icon className="w-5 h-5 text-primary" />
+      <h3 className="font-semibold text-lg">{title}</h3>
+    </div>
+    <div className="space-y-4">{children}</div>
+  </Card>
+);
+
+const FormField = ({ label, value, onChange, placeholder }: FormFieldProps) => (
+  <div className="space-y-2">
+    <Label className="text-sm font-medium">{label}</Label>
+    <Input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+    />
+  </div>
+);
 
 const PayslipForm = ({ data, onChange }: PayslipFormProps) => {
   const updateField = (field: string, value: string) => {
@@ -28,28 +65,6 @@ const PayslipForm = ({ data, onChange }: PayslipFormProps) => {
     });
   };
 
-  const FormSection = ({ icon: Icon, title, children }: any) => (
-    <Card className="p-6 backdrop-blur-sm bg-card/50 border-primary/10 hover:border-primary/20 transition-all duration-300">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon className="w-5 h-5 text-primary" />
-        <h3 className="font-semibold text-lg">{title}</h3>
-      </div>
-      <div className="space-y-4">{children}</div>
-    </Card>
-  );
-
-  const FormField = ({ label, value, onChange, placeholder }: any) => (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium">{label}</Label>
-      <Input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-      />
-    </div>
-  );
-
   return (
     <div className="space-y-6">
       <FormSection icon={Building2} title="Company Information">
@@ -59,7 +74,7 @@ const PayslipForm = ({ data, onChange }: PayslipFormProps) => {
           onChange={(v: string) => updateField("companyName", v)}
           placeholder="Enter company name"
         />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             label="Month"
             value={data.month}
@@ -76,7 +91,7 @@ const PayslipForm = ({ data, onChange }: PayslipFormProps) => {
       </FormSection>
 
       <FormSection icon={User} title="Employee Information">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             label="Employee No."
             value={data.employeeNo}
@@ -111,7 +126,7 @@ const PayslipForm = ({ data, onChange }: PayslipFormProps) => {
       </FormSection>
 
       <FormSection icon={Calendar} title="Attendance & Details">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             label="Date of Birth"
             value={data.dob}
@@ -173,7 +188,7 @@ const PayslipForm = ({ data, onChange }: PayslipFormProps) => {
       </FormSection>
 
       <FormSection icon={Wallet} title="Earnings">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             label="Basic"
             value={data.earnings.basic}
@@ -232,7 +247,7 @@ const PayslipForm = ({ data, onChange }: PayslipFormProps) => {
       </FormSection>
 
       <FormSection icon={Wallet} title="Deductions">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FormField
             label="PF Employee Contribution"
             value={data.deductions.pfEmployee}

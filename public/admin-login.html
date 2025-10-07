@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Payslip Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-container">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <p class="login-subtitle">Sign in to access your dashboard</p>
+                <h1 class="login-title">Pay slip generator</h1>
+            </div>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="Enter your username"
+                        required
+                        autocomplete="username"
+                    >
+                    <span class="error-message" id="usernameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="admin@example.com"
+                        required
+                        autocomplete="email"
+                    >
+                    <span class="error-message" id="emailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="password-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                            minlength="6"
+                        >
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
+                            <svg class="eye-icon" id="eyeIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="error-message" id="passwordError"></span>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span class="checkbox-label">Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password" id="forgotPasswordLink">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-button" id="loginButton">
+                    <span class="button-text">Sign In</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+
+                <div class="divider">
+                    <span class="divider-text">or</span>
+                </div>
+
+                <button type="button" class="signup-link-button" id="signupButton">
+                    Create Admin Account
+                </button>
+            </form>
+
+            <div class="login-footer">
+                <p class="footer-text">Protected by Firebase Authentication</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <svg class="toast-icon" id="toastIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="toast-message" id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword,
+            sendPasswordResetEmail,
+            onAuthStateChanged,
+            setPersistence,
+            browserLocalPersistence,
+            browserSessionPersistence
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDoc,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKIOuX5I5jVBGfvSHFK_a0rzQJi-Q-THM",
+            authDomain: "payslip-generator-b8317.firebaseapp.com",
+            projectId: "payslip-generator-b8317",
+            storageBucket: "payslip-generator-b8317.firebasestorage.app",
+            messagingSenderId: "971294189905",
+            appId: "1:971294189905:web:6454179ffa220b509e8b70",
+            measurementId: "G-CH5YP80XDK"
+        };
+
+        // Initialize Firebase
+        console.log('🔥 Initializing Firebase...');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        console.log('✅ Firebase initialized successfully');
+
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const spinner = document.getElementById('spinner');
+        const buttonText = loginButton.querySelector('.button-text');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const signupButton = document.getElementById('signupButton');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+        const rememberMeCheckbox = document.getElementById('rememberMe');
+
+        // Input sanitization function
+        function sanitizeInput(input) {
+            const div = document.createElement('div');
+            div.textContent = input;
+            return div.innerHTML;
+        }
+
+        // Email validation
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'error') {
+            toastMessage.textContent = message;
+            toast.classList.remove('show', 'success', 'error', 'info');
+            
+            // Set icon based on type
+            if (type === 'success') {
+                toastIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+            } else if (type === 'error') {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+            } else {
+                toastIcon.innerHTML = '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+            }
+            
+            toast.classList.add(type, 'show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // Clear error messages
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('.form-input').forEach(el => el.classList.remove('input-error'));
+        }
+
+        // Show field error
+        function showFieldError(fieldId, message) {
+            const errorElement = document.getElementById(`${fieldId}Error`);
+            const inputElement = document.getElementById(fieldId);
+            if (errorElement && inputElement) {
+                errorElement.textContent = message;
+                inputElement.classList.add('input-error');
+            }
+        }
+
+        // Toggle loading state
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loginButton.disabled = true;
+                spinner.style.display = 'block';
+                buttonText.style.opacity = '0';
+            } else {
+                loginButton.disabled = false;
+                spinner.style.display = 'none';
+                buttonText.style.opacity = '1';
+            }
+        }
+
+        // Toggle password visibility
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            togglePassword.classList.toggle('active');
+        });
+
+        // Form validation
+        function validateForm(username, email, password) {
+            clearErrors();
+            let isValid = true;
+
+            if (!username || username.trim().length < 3) {
+                showFieldError('username', 'Username must be at least 3 characters');
+                isValid = false;
+            }
+
+            if (!email || !isValidEmail(email)) {
+                showFieldError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            if (!password || password.length < 6) {
+                showFieldError('password', 'Password must be at least 6 characters');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Store user data in Firestore
+        async function storeUserData(userId, username, email) {
+            try {
+                await setDoc(doc(db, 'users', userId), {
+                    userId: userId,
+                    username: sanitizeInput(username),
+                    email: email.toLowerCase(),
+                    createdAt: serverTimestamp(),
+                    role: 'admin',
+                    lastLogin: serverTimestamp()
+                });
+                console.log('✅ User data stored in Firestore');
+            } catch (error) {
+                console.error('❌ Error storing user data:', error);
+                throw error;
+            }
+        }
+
+        // Update last login
+        async function updateLastLogin(userId) {
+            try {
+                await setDoc(doc(db, 'users', userId), {
+                    lastLogin: serverTimestamp()
+                }, { merge: true });
+                console.log('✅ Last login updated');
+            } catch (error) {
+                console.error('⚠️ Error updating last login:', error);
+            }
+        }
+
+        // Check if user exists in Firestore
+        async function checkUserExists(userId) {
+            try {
+                const docRef = doc(db, 'users', userId);
+                const docSnap = await getDoc(docRef);
+                return docSnap.exists();
+            } catch (error) {
+                console.error('❌ Error checking user:', error);
+                return false;
+            }
+        }
+
+        // Handle login
+        async function handleLogin(email, password, username) {
+            console.log('🔐 Attempting login...');
+            setLoading(true);
+
+            try {
+                // Set persistence based on "Remember Me" checkbox
+                const persistence = rememberMeCheckbox.checked 
+                    ? browserLocalPersistence 
+                    : browserSessionPersistence;
+                await setPersistence(auth, persistence);
+                console.log(`🔒 Persistence set to: ${rememberMeCheckbox.checked ? 'local' : 'session'}`);
+
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                console.log('✅ Login successful:', user.uid);
+
+                // Update last login
+                await updateLastLogin(user.uid);
+
+                showToast('Login successful! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('❌ Login error:', error.code, error.message);
+                setLoading(false);
+
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        showToast('No account found with this email. Please sign up first.', 'error');
+                        break;
+                    case 'auth/wrong-password':
+                        showToast('Incorrect password. Please try again.', 'error');
+                        showFieldError('password', 'Incorrect password');
+                        break;
+                    case 'auth/invalid-email':
+                        showToast('Invalid email format.', 'error');
+                        showFieldError('email', 'Invalid email format');
+                        break;
+                    case 'auth/too-many-requests':
+                        showToast('Too many failed attempts. Please try again later.', 'error');
+                        break;
+                    case 'auth/invalid-credential':
+                        showToast('Invalid credentials. Please check your email and password.', 'error');
+                        break;
+                    default:
+                        showToast('Login failed. Please try again.', 'error');
+                }
+            }
+        }
+
+        // Handle signup
+        async function handleSignup(email, password, username) {
+            console.log('📝 Attempting signup...');
+            setLoading(true);
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                console.log('✅ Signup successful:', user.uid);
+
+                // Store user data in Firestore
+                await storeUserData(user.uid, username, email);
+
+                showToast('Account created successfully! Redirecting...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('❌ Signup error:', error.code, error.message);
+                setLoading(false);
+
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        showToast('An account with this email already exists. Please login.', 'error');
+                        showFieldError('email', 'Email already in use');
+                        break;
+                    case 'auth/invalid-email':
+                        showToast('Invalid email format.', 'error');
+                        showFieldError('email', 'Invalid email format');
+                        break;
+                    case 'auth/weak-password':
+                        showToast('Password is too weak. Use at least 6 characters.', 'error');
+                        showFieldError('password', 'Password too weak');
+                        break;
+                    default:
+                        showToast('Signup failed. Please try again.', 'error');
+                }
+            }
+        }
+
+        // Form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = sanitizeInput(document.getElementById('username').value.trim());
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+
+            if (!validateForm(username, email, password)) {
+                return;
+            }
+
+            // Try to login first
+            await handleLogin(email, password, username);
+        });
+
+        // Signup button
+        signupButton.addEventListener('click', async () => {
+            const username = sanitizeInput(document.getElementById('username').value.trim());
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
+
+            if (!validateForm(username, email, password)) {
+                return;
+            }
+
+            await handleSignup(email, password, username);
+        });
+
+        // Forgot password
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+
+            if (!email || !isValidEmail(email)) {
+                showToast('Please enter a valid email address first.', 'error');
+                showFieldError('email', 'Email required for password reset');
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showToast('Password reset email sent! Check your inbox.', 'success');
+            } catch (error) {
+                console.error('❌ Password reset error:', error);
+                showToast('Failed to send reset email. Please try again.', 'error');
+            }
+        });
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log('👤 User already logged in:', user.uid);
+                // Redirect if already logged in
+                window.location.href = 'home.html';
+            } else {
+                console.log('👤 No user logged in');
+            }
+        });
+
+        // Clear errors on input
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('input', () => {
+                input.classList.remove('input-error');
+                const errorElement = document.getElementById(`${input.id}Error`);
+                if (errorElement) errorElement.textContent = '';
+            });
+        });
+
+    </script>
+</body>
+</html>

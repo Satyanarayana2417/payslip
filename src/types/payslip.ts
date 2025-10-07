@@ -36,3 +36,52 @@ export interface PayslipData {
   };
   pfEmployer: string;
 }
+
+export interface InternPayslipData {
+  // General Information
+  companyName: string;
+  companyAddress: string;
+  month: string;
+  year: string;
+  payslipReferenceNo: string;
+  
+  // Intern Information
+  internName: string;
+  internId: string;
+  department: string;
+  designation: string;
+  joiningDate: string;
+  internshipStartDate: string;
+  internshipEndDate: string;
+  workLocation: string; // Office / Remote / Hybrid
+  daysWorked: string;
+  daysPaid: string;
+  
+  // Stipend & Earnings
+  earnings: {
+    baseStipend: string;
+    performanceBonus: string;
+    travelAllowance: string;
+    mealAllowance: string;
+    internetAllowance: string;
+    otherAllowance: string;
+  };
+  
+  // Deductions
+  deductions: {
+    tds: string;
+    otherDeductions: string;
+  };
+  
+  // Bank Information
+  bankName: string;
+  accountNumber: string;
+  upiId: string;
+  paymentMode: string; // Bank Transfer / UPI / Cash
+  paymentDate: string;
+  transactionId: string;
+  
+  // Declaration / Notes
+  remarks: string;
+  hrContact: string;
+}
