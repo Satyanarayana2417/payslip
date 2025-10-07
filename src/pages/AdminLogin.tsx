@@ -274,19 +274,19 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-8 shadow-2xl border-0 bg-white">
+      <Card className="w-full max-w-md p-4 sm:p-8 shadow-2xl border-0 bg-white">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 bg-teal-600 rounded-full flex items-center justify-center">
-              <Layers className="w-8 h-8 text-white" />
+        <div className="text-center mb-4 sm:mb-8">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-teal-600 rounded-full flex items-center justify-center">
+              <Layers className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">🔐 Payslip generator</h1>
-          <p className="text-gray-600 text-sm">Authorized Persons Only</p>
+          <h1 className="text-lg sm:text-3xl font-bold text-gray-900 mb-2">🔐 Payslip generator</h1>
+          <p className="text-gray-600 text-xs sm:text-sm">Authorized Persons Only</p>
           
           {/* Warning Banner */}
-          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <p className="text-xs text-amber-800 text-center font-medium">
               ⚠️ Restricted Access: Only authorized administrators can login
             </p>
@@ -294,7 +294,7 @@ const AdminLogin = () => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-5">
+        <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
           {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
@@ -307,7 +307,7 @@ const AdminLogin = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-11 border-gray-300 focus:border-teal-500 focus:ring-teal-500"
+              className="h-10 sm:h-11 border-gray-300 focus:border-teal-500 focus:ring-teal-500"
             />
           </div>
 
@@ -325,7 +325,7 @@ const AdminLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="h-11 pr-10 border-gray-300 focus:border-teal-500 focus:ring-teal-500"
+                className="h-10 sm:h-11 pr-10 border-gray-300 focus:border-teal-500 focus:ring-teal-500"
               />
               <button
                 type="button"
@@ -361,12 +361,12 @@ const AdminLogin = () => {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full h-12 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-semibold text-base shadow-lg shadow-teal-600/30 transition-all"
+            className="w-full h-10 sm:h-12 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-semibold text-sm sm:text-base shadow-lg shadow-teal-600/30 transition-all"
           >
             {isLoading ? (
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Verifying Access...</span>
+                <span className="text-xs sm:text-sm">Verifying Access...</span>
               </div>
             ) : (
               <span>🔐 Admin Sign In</span>
@@ -375,7 +375,7 @@ const AdminLogin = () => {
         </form>
 
         {/* Footer */}
-        <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200 text-center">
           <p className="text-xs text-red-600 flex items-center justify-center gap-2 mb-2">
             <span>⚠️</span>
             <span className="font-semibold">Unauthorized access is prohibited and monitored</span>
